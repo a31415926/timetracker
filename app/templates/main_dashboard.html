@@ -202,18 +202,17 @@
 
                 </div>
 <script>
-        function newVacation(id, action){
+        function newVacation(form){
             var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-            var urlencoded = new URLSearchParams();
-            urlencoded.append("action", action);
+            //myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+            var Form = new FormData(form);
             var requestOptions = {
               method: 'POST',
               headers: myHeaders,
-              body: urlencoded,
+              body: Form,
               redirect: 'follow'
             };
-            fetch("/vacation/"+id, requestOptions)
+            fetch("/new_vacation", requestOptions)
               .then((response) => { return response.json()})
               .then((result) => {
                     if (result.success) {

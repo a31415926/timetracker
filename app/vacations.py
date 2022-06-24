@@ -23,7 +23,7 @@ def create_vacation_get():
 @vacations.route('/new_vacation', methods=['POST'])
 @login_required
 def create_vacation_post():
-    if request.form.get('date_from') and request.form.get('date_from'):
+    if request.form.get('date_from') and request.form.get('date_to'):
         date_from = datetime.strptime(request.form.get('date_from'), '%Y-%m-%d')
         date_to = datetime.strptime(request.form.get('date_to'), '%Y-%m-%d')
     else:
