@@ -1,0 +1,91 @@
+{% extends "basic_dashboard.html" %}
+{% block content %}
+      <!-- Topbar -->
+      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <form class="form-inline">
+              <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                  <i class="fa fa-bars"></i>
+              </button>
+          </form>
+
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+
+              <!-- Nav Item - Messages -->
+              <li class="nav-item dropdown no-arrow mx-1">
+                  <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-envelope fa-fw"></i>
+                      <!-- Counter - Messages -->
+                      <span class="badge badge-danger badge-counter">7</span>
+                  </a>
+              </li>
+
+              <div class="topbar-divider d-none d-sm-block"></div>
+
+              <!-- Nav Item - User Information -->
+              <li class="nav-item dropdown no-arrow">
+                  <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                      <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                  </a>
+              </li>
+
+          </ul>
+
+      </nav>
+      <!-- End of Topbar -->
+
+      <!-- Begin Page Content -->
+      <div class="container-fluid">
+          <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              </div>
+              <div class="card-body">
+                  <div class="">
+                      <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                          <div class="row"><div class="col-sm-12">
+                              <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                          <thead>
+                              <tr role="row">
+                                  <th>Дата</th>
+                                  <th>Общее время</th>
+                                  <th>Посещения</th>
+                              </tr>
+                          </thead>
+                          <tfoot>
+                              <tr><th rowspan="1" colspan="1">Дата</th>
+                                  <th rowspan="1" colspan="1">Общее время</th>
+                                  <th rowspan="1" colspan="1">Посещения</th>
+                              </tr>
+                          </tfoot>
+                          <tbody>
+                                {% for date, val in all_dates.items() %}
+                                      <tr class="even">
+                                          <td class="sorting_1">{{val.date}} ({{val.weekday}})</td>
+                                          <td>{{val.times_day}}</td>
+                                          <td>
+                                              {% for visit in val.visits%}
+                                                 {{visit.date_start}} - {{visit.date_end}}
+                                                    {% if visit.time_delta%} ({{visit.time_delta}}) {% endif %}
+                                                    <br>
+                                              {% endfor %}
+                                          </td>
+                                      </tr>
+                                {% endfor %}
+                          </tbody>
+                      </table></div></div>
+                          </div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+      <!-- /.container-fluid -->
+
+  </div>
+{% endblock %}

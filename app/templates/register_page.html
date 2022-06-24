@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div>
+        {{ messages[0] }}
+    </div>
+{% endif %}
+{% endwith %}
+<form action="/auth/register" method="post">
+  <input type="text" name="email">
+  <input type="password" name="password">
+    <input type="submit" value="Рега">
+</form>
+</body>
+</html>

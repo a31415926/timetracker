@@ -1,0 +1,119 @@
+{% extends "basic_dashboard.html" %}
+{% block content %}
+      <!-- Topbar -->
+      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+      </nav>
+      <!-- End of Topbar -->
+      <!-- Begin Page Content -->
+      <div class="container-fluid">
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              </div>
+              <div>
+                  <form id='create_office' onsubmit="actionOffice(this, 'create'); return false;">
+                        Имя: <input type="text" name="name" id="name_office" value=""><br>
+                        <input type="submit" value="Создать">
+                  </form>
+              </div>
+              <div class="card-body">
+                  <div class="">
+                      <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                          <div class="row"><div class="col-sm-12">
+                          <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                          <thead>
+                              <tr role="row">
+                                  <th>Name</th>
+                                  <th>Position</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                                {% for office in offices %}
+                                      <tr class="even">
+                                          <td class="sorting_1">
+                                              <input value="{{office.name}}" type="text" id="office_name_{{office.id}}">
+                                          </td>
+                                          <td><button onclick="editOffice({{office.id}})">Изменить</button></td>
+                                      </tr>
+                                {% endfor %}
+                          </tbody>
+                      </table>
+                          </div></div>
+                          </div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+      <!-- /.container-fluid -->
+
+  </div>
+<script>
+    function editUserForm(uid){
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+                var urlencoded = new URLSearchParams();
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: urlencoded,
+                  redirect: 'follow'
+                };
+                fetch("/user/"+uid, requestOptions)
+                  .then((response) => { return response.json()})
+                  .then((result) => {
+                        console.log(result);
+                        $('#user_id').val(result?.id)
+                        $('#user_name').val(result?.name)
+                        $('#user_email').val(result?.email)
+                        $('#exampleModal').modal('show');
+                  })
+                  .catch(error => function(){
+                        console.log('neok');
+                  });
+       }
+       function actionOffice(form, action){
+            var myHeaders = new Headers();
+                //myHeaders.append("Content-Type", "multipart/form-data");
+                var Form = new FormData(form);
+                Form.append('action', action);
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: Form,
+                  redirect: 'follow'
+                };
+                fetch("/admin/office", requestOptions)
+                  .then((response) => { return response.json()})
+                  .then((result) => {
+                        console.log(result);
+                  })
+                  .catch(error => function(){
+                        console.log('neok');
+                  });
+       }
+       function editOffice(office_id){
+            var myHeaders = new Headers();
+                //myHeaders.append("Content-Type", "multipart/form-data");
+                var Form = new FormData();
+                Form.append('action', 'edit');
+                Form.append('office_id', office_id);
+                Form.append('name', $('#office_name_'+office_id).val())
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: Form,
+                  redirect: 'follow'
+                };
+                fetch("/admin/office", requestOptions)
+                  .then((response) => { return response.json()})
+                  .then((result) => {
+                        console.log(result);
+                  })
+                  .catch(error => function(){
+                        console.log('neok');
+                  });
+       }
+</script>
+{% endblock %}

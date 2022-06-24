@@ -1,0 +1,323 @@
+{% extends "basic_dashboard.html" %}
+{% block content %}
+
+            <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <div class="topbar-divider d-none d-sm-block"></div>
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <img class="img-profile rounded-circle"
+                                    src="img/undraw_profile.svg">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Activity Log
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Content Row -->
+                    <button class="btn btn-primary btn-icon-split" onclick="actionVisit('enter')">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <span class="text">Отметить вход</span>
+                    </button>
+                    <button class="btn btn-secondary btn-icon-split" onclick="actionVisit('exit')">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <span class="text">Отметить выход</span>
+                    </button><!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" onclick="ModalVacation()">
+                      Создать заявку на отпуск
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!--<form action="{{url_for('vacations.create_vacation_post')}}" method="post">-->
+                              <form onsubmit="newVacation(this)">
+                                Дата начала: <input type="date" name="date_from"> <br>
+                                Дата окончания: <input type="date" name="date_to"> <br>
+                                На кого заявка:
+                                <select name="responsible_id" id="list_responsible">
+                                </select><br>
+                                <textarea name="comment"></textarea><br>
+                                Отправить всем уведомление при подтверждении заявки:
+                                <input type="checkbox" name="is_mailing" checked><br>
+                                Комментарий рассылки: <br>
+                                <textarea name="text_mailing"></textarea><br>
+                                <input type="submit" value="Создать">
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <span class="text_visit"></span>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Посещения</h6>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    {% for visit in visits %}
+                                        <div>
+                                           {{'{:%Y-%m-%d %H:%M:%S}'.format(visit.date_start)}} - {%if visit.date_end%} {{'{:%Y-%m-%d %H:%M:%S}'.format(visit.date_end)}} {%endif%}
+                                            {%if visit.time_delta%}({{'{:%H:%M:%S}'.format(visit.time_delta)}}){%endif%}
+                                        </div>
+                                    <hr>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Area Chart -->
+
+                        <!-- Pie Chart -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Отпуска</h6>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    {% for vacation in vacations %}
+                                        <div>
+                                            Отпуск: с {{vacation.date_from}} по {{vacation.date_to}} <br>
+                                            Состояние: {% if vacation.state == 1 %}
+                                                            Подтверждена
+                                                        {%elif vacation.state == -1 %}
+                                                            Отклонена
+                                                        {% else %}
+                                                            Ожидает
+                                                        {% endif %} <br>
+                                            Комментарий: {{ vacation.comment }} <br>
+                                            Кол-во дней: {{ vacation.date_delta }}
+                                            {% if vacation.is_mailing %}
+                                                <br>Текст рассылки: {{ vacation.mailing_comment }}
+                                            {% endif %}
+                                        </div>
+                                    <hr>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+
+{% if current_user.is_approve_vacation %}
+                        <!-- Pie Chart -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Заявки:</h6>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    {% for vacation in new_vacations %}
+                                        <div id="new_vacation_{{vacation.id}}" class="class1">
+                                            Создано: {{'{:%Y-%m-%d %H:%M}'.format(vacation.date_create)}} <br>
+                                            Отпуск: с {{vacation.date_from}} по {{vacation.date_to}} <br>
+                                            Кол-во дней: <input type="number" size="2" value="{{ vacation.date_delta }}" > <br>
+                                            От: <a href="/user/{{vacation.user.id}}" target="_blank">{{vacation.user.name}}</a> <br>
+                                            Комментарий: {{ vacation.comment }} <br>
+                                            <button class="btn btn-success btn-icon-split" onclick="actionVacation({{vacation.id}}, 'approve')">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-check"></i>
+                                                </span>
+                                                <span class="text">Одобрить</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-icon-split" onclick="actionVacation({{vacation.id}}, 'rejected')">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                                <span class="text">Отменить</span>
+                                            </button>
+                                        </div>
+                                    <hr>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+{% endif %}
+                    <!-- Content Row -->
+
+
+                </div>
+<script>
+        function newVacation(id, action){
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+            var urlencoded = new URLSearchParams();
+            urlencoded.append("action", action);
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: urlencoded,
+              redirect: 'follow'
+            };
+            fetch("/vacation/"+id, requestOptions)
+              .then((response) => { return response.json()})
+              .then((result) => {
+                    if (result.success) {
+                        if (result.new_status == '-1'){
+                            document.getElementById('new_vacation_'+id).classList.toggle('bg-gradient-danger');
+                            document.getElementById('new_vacation_'+id).classList.toggle('text-white');
+                        } else if (result.new_status == '1') {
+                            document.getElementById('new_vacation_'+id).classList.toggle('bg-gradient-success');
+                            document.getElementById('new_vacation_'+id).classList.toggle('text-white');
+                        }
+                    } else {
+                        console.log(result.msg);
+                    }
+              })
+              .catch(error => function(){
+                    console.log('neok');
+              });
+        }
+        function actionVacation(id, action){
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+                var urlencoded = new URLSearchParams();
+                urlencoded.append("action", action);
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: urlencoded,
+                  redirect: 'follow'
+                };
+                fetch("/vacation/"+id, requestOptions)
+                  .then((response) => { return response.json()})
+                  .then((result) => {
+                        if (result.success) {
+                            if (result.new_status == '-1'){
+                                document.getElementById('new_vacation_'+id).classList.toggle('bg-gradient-danger');
+                                document.getElementById('new_vacation_'+id).classList.toggle('text-white');
+                            } else if (result.new_status == '1') {
+                                document.getElementById('new_vacation_'+id).classList.toggle('bg-gradient-success');
+                                document.getElementById('new_vacation_'+id).classList.toggle('text-white');
+                            }
+                        } else {
+                            console.log(result.msg);
+                        }
+                  })
+                  .catch(error => function(){
+                        console.log('neok');
+                  });
+        }
+        function actionVisit(action){
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+                var urlencoded = new URLSearchParams();
+                urlencoded.append("action", action);
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: urlencoded,
+                  redirect: 'follow'
+                };
+                fetch("/dashboard/visit", requestOptions)
+                  .then((response) => { return response.json()})
+                  .then((result) => {
+                        if (result.success) {
+                            $('.text_visit').text('Посещение отмечено');
+                            setTimeout(()=>$('.text_visit').text(''), 5000);
+                        } else {
+                            $('.text_visit').text(result.msg);
+                            console.log(result.msg);
+                        }
+                  })
+                  .catch(error => function(){
+                        console.log('neok');
+                  });
+        }
+       function ModalVacation(){
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+                var urlencoded = new URLSearchParams();
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: urlencoded,
+                  redirect: 'follow'
+                };
+                fetch("/dashboard/get_responsible_id", requestOptions)
+                  .then((response) => { return response.json()})
+                  .then((result) => {
+                        if (result.success) {
+                            var select_responsible = document.getElementById('list_responsible');
+                            for (const [key, value] of Object.entries(result.users)) {
+                                var option = document.createElement('option');
+                                option.value=key;
+                                option.text=value;
+                                select_responsible.appendChild(option);
+                            }
+                            $('#exampleModal').modal('show');
+                        } else {
+
+                        }
+                  })
+                  .catch(error => function(){
+                        console.log('neok');
+                  });
+       }
+    </script>
+<!-- /.container-fluid -->
+{% endblock %}

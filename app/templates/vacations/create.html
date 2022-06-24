@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/new_vacation" method="post">
+  Дата начала: <input type="date" name="date_from"> <br>
+  Дата окончания: <input type="date" name="date_to"> <br>
+  На кого заявка:
+  <select name="responsible_id">
+  {% for user in users %}
+    <option value="{{user.id}}">{{user.name}}</option>
+  {% endfor %}
+  </select><br>
+  <textarea name="comment"></textarea><br>
+  <input type="submit" value="Создать">
+</form>
+
+</body>
+</html>
